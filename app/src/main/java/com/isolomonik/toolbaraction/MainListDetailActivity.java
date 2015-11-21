@@ -1,15 +1,19 @@
 package com.isolomonik.toolbaraction;
 
+import android.content.Intent;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
-import android.widget.ListView;
 
-public class MainListDetailActivity extends AppCompatActivity {
-public ListView listView;
-public Fragment detailFragment;
+public class MainListDetailActivity extends AppCompatActivity implements CallBackInterface {
+    public Fragment listFragment;
+    public DetailFragment detailFragment;
+    FragmentManager fm;
+    static int  LIST_POSITION = 0;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -20,22 +24,17 @@ public Fragment detailFragment;
         setSupportActionBar(toolbar);
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        listView =(ListView) findViewById(R.id.listView);
-        detailFragment= new DetailFragment();
-        if (findViewById(R.id.detailCont) == null ) {
-//            Intent intent = new Intent(this, Lesson6DetailActivity.class);
-//            intent.putExtra("position", position);
-//            startActivity(intent);
+//LIST_POSITION=0;
+        listFragment = new ListViewFragment();
+        detailFragment = new DetailFragment();
 
-////                 lesson6DetailFragment = lesson6DetailFragment.newInstance(pos);
-//                   getSupportFragmentManager().beginTransaction().replace(R.id.cont, lesson6DetailFragment).commit();
-        }
-        else {
-           if (detailFragment.isInLayout()) {
-               getSupportFragmentManager().beginTransaction().replace(R.id.detailCont, detailFragment).commit();
-           }else {
-               getSupportFragmentManager().beginTransaction().add(R.id.detailCont, detailFragment).commit();
-           }
+
+        if (findViewById(R.id.detailCont) != null) {
+            if (detailFragment.isInLayout()) {
+                getSupportFragmentManager().beginTransaction().replace(R.id.detailCont, detailFragment).commit();
+            } else {
+                getSupportFragmentManager().beginTransaction().add(R.id.detailCont, detailFragment).commit();
+            }
         }
     }
 
@@ -48,6 +47,20 @@ public Fragment detailFragment;
             default:
                 return super.onOptionsItemSelected(item);
 
+        }
+    }
+
+
+    @Override
+    public void updateContent(int position) {
+
+        detailFragment.setItemContent(position);
+        if (detailFragment.isInLayout()) {
+           fm.beginTransaction().replace(R.id.detailCont, detailFragment).commit();
+        } else {
+            Intent intent = new Intent(this, DetailActivity.class);
+            intent.putExtra("position", position);
+            startActivity(intent);
         }
     }
 }

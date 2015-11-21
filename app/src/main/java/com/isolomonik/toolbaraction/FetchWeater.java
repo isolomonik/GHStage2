@@ -27,12 +27,12 @@ public class FetchWeater extends AsyncTask<Void, Void, String> {
  //   Fragment view;
 
     String dummyAppid = "0ebf995a77d995a5b5dabb0bff29b368";
-    String queryWeather = "http://api.openweathermap.org/data/2.5/hourly?q=Cherkasy&metrics";
+    String queryWeather = "http://api.openweathermap.org/data/2.5/forecast/hourly?q=Cherkasy,ua&units=metric";
     String queryDummyKey = "&appid=" + dummyAppid;
 
-    FetchWeater(TextView tvResult){
+    FetchWeater(){
   //     this.cityName = cityName;
-        this.tvResult = tvResult;
+       this.tvResult = tvResult;
   //      view=fragment;
     }
 
@@ -57,23 +57,13 @@ public class FetchWeater extends AsyncTask<Void, Void, String> {
         }
 
 
-//        final String finalQueryReturn = query + "\n\n" + queryReturn;
-//        //view.runOnUiThread(new Runnable() {
-//        view.post(new Runnable() {
-//            @Override
-//            public void run() {
-//                //  textViewInfo.setText(finalQueryReturn);
-//                System.out.println(finalQueryReturn);
-//            }
-//        });
-
-
-        return result;
+       return result;
     }
 
     @Override
-    protected void onPostExecute(String s) {
-        tvResult.setText(s);
+    protected void onPostExecute(String strJson) {
+        super.onPostExecute(strJson);
+        // выводим целиком полученную json-строку
     }
 
     private String sendQuery(String query) throws IOException {
