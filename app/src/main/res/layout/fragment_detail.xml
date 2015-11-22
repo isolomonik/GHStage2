@@ -1,7 +1,9 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<GridLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="match_parent" tools:context="com.isolomonik.toolbaraction.DetailFragment"
-    android:id="@+id/detailFragmentCont">
+    android:id="@+id/detailFragmentCont"
+    android:columnCount="2"
+    android:rowCount="3">
 
     <!-- TODO: Update blank fragment layout -->
 
@@ -10,38 +12,23 @@
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="Large Text"
-        android:id="@+id/week_detail"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="Medium Text"
-        android:id="@+id/hour_detail"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="Medium Text"
         android:id="@+id/dmy_detail"
-        android:layout_below="@+id/week_detail"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginTop="30dp" />
+       />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Medium Text"
+        android:id="@+id/temp_detail"
+
+        />
 
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/icon_detail"
-        android:layout_alignTop="@+id/dmy_detail"
-        android:layout_alignLeft="@+id/hour_detail"
-        android:layout_alignStart="@+id/hour_detail" />
+        />
 
     <TextView
         android:layout_width="wrap_content"
@@ -49,9 +36,7 @@
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="Medium Text"
         android:id="@+id/main_detail"
-        android:layout_alignTop="@+id/icon_detail"
-        android:layout_toRightOf="@+id/hour_detail"
-        android:layout_toEndOf="@+id/hour_detail" />
+        />
 
     <TextView
         android:layout_width="wrap_content"
@@ -59,28 +44,13 @@
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="Medium Text"
         android:id="@+id/wind_detail"
-        android:layout_below="@+id/dmy_detail"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginTop="30dp" />
+        />
 
     <TextView
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="Medium Text"
-        android:id="@+id/wind_deg_detail"
-        android:layout_alignTop="@+id/wind_detail"
-        android:layout_toRightOf="@+id/wind_detail"
-        android:layout_toEndOf="@+id/wind_detail" />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="Medium Text"
         android:id="@+id/humidity_detail"
-        android:layout_alignTop="@+id/wind_deg_detail"
-        android:layout_alignLeft="@+id/main_detail"
-        android:layout_alignStart="@+id/main_detail" />
-</RelativeLayout>
+         />
+</GridLayout>

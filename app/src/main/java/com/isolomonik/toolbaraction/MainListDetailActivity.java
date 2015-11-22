@@ -79,7 +79,7 @@ public class MainListDetailActivity extends AppCompatActivity implements CallBac
     public void updateContent(int position) {
 
         detailFragment.setItemContent(position);
-        if (detailFragment.isInLayout()) {
+        if (detailFragment.isVisible()) {
             fm.beginTransaction().replace(R.id.detailCont, detailFragment).commit();
         } else {
             Intent intent = new Intent(this, DetailActivity.class);
