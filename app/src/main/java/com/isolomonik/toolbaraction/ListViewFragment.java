@@ -20,8 +20,7 @@ public class ListViewFragment extends Fragment {
     private CallBackInterface callBackInterface;
 
    ListView listView;
-
-    static ArrayList<HashMap<String, String>> WeatherData;
+    private WeatherAdapter adapter;
 
     public ListViewFragment() {
            }
@@ -40,27 +39,24 @@ public class ListViewFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_list, container, false);
-    }
 
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        // Listen to clicks ...
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                callBackInterface.updateContent(position);
-            }
-        });
     }
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        // Starting AsynkTask to download and parse data
-        FetchWeater fetchWeater = new FetchWeater();
-        fetchWeater.execute();
+
         listView = (ListView) view.findViewById(R.id.listView);
+        adapter = new WeatherAdapter(getView().getContext());
+
+        listView.setAdapter(adapter);
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                callBackInterface.updateContent(position);
+            }
+
+    });
     }
 }

@@ -44,15 +44,15 @@ public class DetailFragment extends Fragment {
         TextView windTV = (TextView) view.findViewById(R.id.wind_detail);
         TextView windDegTV = (TextView) view.findViewById(R.id.wind_deg_detail);
         TextView humidityTV = (TextView) view.findViewById(R.id.humidity_detail);
-        // Set data to TextViews
-        HashMap<String, String> hourWeather = ListViewFragment.WeatherData.get(position);
-        weekTV.setText(hourWeather.get("week"));
-     //   dateTextView.setText(String.format(getResources().getString(R.string.dd_mmm_yyyy), aForecast.get("day"), aForecast.get("month"), aForecast.get("year")));
-        hourTV.setText(hourWeather.get("hour"));
-        mainTV.setText(hourWeather.get("main"));
-        windTV.setText(hourWeather.get("wind"));
-        windDegTV.setText(hourWeather.get("direction"));
-        humidityTV.setText(hourWeather.get("humidity"));
+//        // Set data to TextViews
+ //       HourlyWeather hourWeather = FetchWeater.weather.get(position);
+//        weekTV.setText(hourWeather.get("week"));
+//     //   dateTextView.setText(String.format(getResources().getString(R.string.dd_mmm_yyyy), aForecast.get("day"), aForecast.get("month"), aForecast.get("year")));
+//        hourTV.setText(hourWeather.get("hour"));
+//        mainTV.setText(hourWeather.get("main"));
+//        windTV.setText(hourWeather.get("wind"));
+//        windDegTV.setText(hourWeather.get("direction"));
+//        humidityTV.setText(hourWeather.get("humidity"));
         // Set image
 //        Picasso.with(getContext())
 //                .load(String.format(getResources().getString(R.string.icon_url), aForecast.get("icon")))
