@@ -28,7 +28,7 @@ public class MainListDetailActivity extends AppCompatActivity implements CallBac
     public DetailFragment detailFragment;
     FragmentManager fm = getSupportFragmentManager();
     private ProgressDialog progressDialog;
-    public static List<HourlyWeather> weather = new ArrayList<>();
+    public List<HourlyWeather> weather = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,7 +80,7 @@ public class MainListDetailActivity extends AppCompatActivity implements CallBac
 
         detailFragment.setItemContent(position);
         if (detailFragment.isVisible()) {
-            detailFragment.updateDetail();
+            detailFragment.updateDetail(weather.get(position));
             fm.beginTransaction().replace(R.id.detailCont, detailFragment).commit();
         } else {
             Intent intent = new Intent(this, DetailActivity.class);

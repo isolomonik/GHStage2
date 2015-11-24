@@ -13,6 +13,8 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
+import java.util.List;
+
 
 public class DetailFragment extends Fragment {
     HourlyWeather hourWeather;
@@ -54,12 +56,12 @@ public class DetailFragment extends Fragment {
        //  windDegTV = (TextView) view.findViewById(R.id.wind_deg_detail);
          humidityTV = (TextView) view.findViewById(R.id.humidity_detail);
 
-       updateDetail();
+       updateDetail(hourWeather);
     }
 
 
-    void updateDetail() {
-        hourWeather = MainListDetailActivity.weather.get(position);
+    void updateDetail(HourlyWeather hourWeather) {
+      //  hourWeather =weather.get(position);
 
 //     //   dateTextView.setText(String.format(getResources().getString(R.string.dd_mmm_yyyy), aForecast.get("day"), aForecast.get("month"), aForecast.get("year")));
         dateTV.setText(hourWeather.dt_txt);
