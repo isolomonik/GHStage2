@@ -10,13 +10,15 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
+import java.util.List;
+
 /**
  * Created by ira on 22.11.15.
  */
 public class WeatherAdapter extends BaseAdapter {
 
     private Context context;
-
+    private List<HourlyWeather> weather;
     public WeatherAdapter(Context context) {
         this.context = context;
 

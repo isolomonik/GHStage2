@@ -1,7 +1,10 @@
 package com.isolomonik.toolbaraction;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -26,9 +29,9 @@ import java.util.List;
 public class MainListDetailActivity extends AppCompatActivity implements CallBackInterface {
     public Fragment listFragment;
     public DetailFragment detailFragment;
-    FragmentManager fm = getSupportFragmentManager();
+    private FragmentManager fm = getSupportFragmentManager();
     private ProgressDialog progressDialog;
-    public List<HourlyWeather> weather = new ArrayList<>();
+    List<HourlyWeather> weather = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,13 +44,24 @@ public class MainListDetailActivity extends AppCompatActivity implements CallBac
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         if (savedInstanceState == null) {
+            if (isNetworkAvailable()){
             // Starting AsynkTask to download and parse data
             LoadWeather loadWeather = new LoadWeather();
             loadWeather.execute();
+        } else {
+           //TODO REALMS
+
+            }
         }
 
 
     }
+private boolean isNetworkAvailable(){
+    ConnectivityManager cm= (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+    NetworkInfo activeNetworkInfo =cm.getActiveNetworkInfo();
+    return activeNetworkInfo!=null;
+}
+
 
     void initFragments() {
         listFragment = new ListViewFragment();
