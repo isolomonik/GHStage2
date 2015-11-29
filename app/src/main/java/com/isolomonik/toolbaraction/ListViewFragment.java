@@ -14,10 +14,14 @@ import android.widget.ListView;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import io.realm.Realm;
+import io.realm.RealmResults;
+
 
 public class ListViewFragment extends Fragment {
 
     private CallBackInterface callBackInterface;
+    Realm realm;
 
    ListView listView;
     private WeatherAdapter adapter;
@@ -28,15 +32,19 @@ public class ListViewFragment extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
+
         try {
             callBackInterface = (CallBackInterface) context;
-        } catch (ClassCastException exception) {
+                    } catch (ClassCastException exception) {
             throw new ClassCastException(context.toString() + " Must implement CallbackInterface");
         }
+         realm = Realm.getInstance(context);
     }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        realm = Realm.getInstance(getContext());
+
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_list, container, false);
 
@@ -48,7 +56,13 @@ public class ListViewFragment extends Fragment {
 
 
         listView = (ListView) view.findViewById(R.id.listView);
-        adapter = new WeatherAdapter(getView().getContext());
+
+        realm.beginTransaction();
+        RealmResults<WeatherData> result = realm.where(WeatherData.class).findAll();
+        ArrayList<WeatherData> weatherList =new ArrayList<>();
+        weatherList.addAll(result.subList(0, result.size()));
+        realm.commitTransaction();
+        adapter = new WeatherAdapter(getView().getContext(),weatherList);
 
         listView.setAdapter(adapter);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {

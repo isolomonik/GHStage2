@@ -15,12 +15,13 @@ public class DetailActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
+        getSupportActionBar().setTitle(R.string.city);
 
         DetailFragment fragment=new DetailFragment();
 
         int position = getIntent().getExtras().getInt("position");
         fragment.setItemContent(position);
+        fragment.updateDetail();
         if (savedInstanceState == null) {
           //  final DetailFragment fragment = DetailFragment.newInstance("My Content");
 
