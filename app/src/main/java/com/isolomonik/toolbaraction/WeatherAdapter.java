@@ -60,7 +60,9 @@ public class WeatherAdapter extends BaseAdapter {
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View rowView = inflater.inflate(R.layout.row_weather, parent, false);
 
-        Picasso.with(context).load("http://openweathermap.org/img/w/" + forecast.getIcon() + ".png").into((ImageView) rowView.findViewById(R.id.img));
+       // Picasso.with(context).load("http://openweathermap.org/img/w/" + forecast.getIcon() + ".png").into((ImageView) rowView.findViewById(R.id.img));
+        int resID = context.getResources().getIdentifier("ic_"+forecast.getIcon() , "drawable", context.getPackageName());
+        ((ImageView) rowView.findViewById(R.id.img)).setImageResource(resID);
 
         ((TextView) rowView.findViewById(R.id.dmy)).setText(forecast.getDate());
         ((TextView) rowView.findViewById(R.id.description)).setText(forecast.getDescription());

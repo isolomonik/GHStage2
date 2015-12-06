@@ -1,9 +1,12 @@
-<GridLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="match_parent" tools:context="com.isolomonik.toolbaraction.DetailFragment"
     android:id="@+id/detailFragmentCont"
     android:columnCount="2"
-    android:rowCount="3">
+    android:rowCount="4"
+    android:orientation="vertical"
+    android:weightSum="1"
+    android:paddingStart="20dp">
 
     <!-- TODO: Update blank fragment layout -->
 
@@ -13,7 +16,7 @@
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="Large Text"
         android:id="@+id/dmy_detail"
-       />
+        />
 
     <TextView
         android:layout_width="wrap_content"
@@ -24,19 +27,13 @@
 
         />
 
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/icon_detail"
-        />
-
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="Medium Text"
         android:id="@+id/main_detail"
-        />
+       />
 
     <TextView
         android:layout_width="wrap_content"
@@ -48,9 +45,15 @@
 
     <TextView
         android:layout_width="wrap_content"
-
+        android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="Medium Text"
         android:id="@+id/humidity_detail"
          />
-</GridLayout>
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/ic_big"
+        />
+</LinearLayout>

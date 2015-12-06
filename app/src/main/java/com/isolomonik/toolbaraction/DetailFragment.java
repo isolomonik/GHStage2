@@ -61,7 +61,7 @@ Realm realm;
 
          dateTV = (TextView) view.findViewById(R.id.dmy_detail);
        //  hourTV = (TextView) view.findViewById(R.id.hour_detail);
-         iconIV = (ImageView) view.findViewById(R.id.icon_detail);
+         iconIV = (ImageView) view.findViewById(R.id.ic_big);
          tempTV = (TextView) view.findViewById(R.id.temp_detail);
          mainTV = (TextView) view.findViewById(R.id.main_detail);
          windTV = (TextView) view.findViewById(R.id.wind_detail);
@@ -90,7 +90,10 @@ Realm realm;
         windTV.setText(String.format("Wind: %.2f m/s %d", weatherData.getSpeed(), weatherData.getDeg()));
         //  windDegTV.setText(hourWeather.wind.deg);
         humidityTV.setText(String.format("Humidity: %d %%", weatherData.getHumidity()));
-        Picasso.with(getContext()).load("http://openweathermap.org/img/w/" + weatherData.getIcon() + ".png").into(iconIV);
+       // Picasso.with(getContext()).load("http://openweathermap.org/img/w/" + weatherData.getIcon() + ".png").into(iconIV);
+      // int res= R.drawable.class.getField(weatherData.getIcon())..getInt();
+        int resID = getResources().getIdentifier("im_"+weatherData.getIcon() , "drawable", getActivity().getPackageName());
+        iconIV.setImageResource(resID);
 
     }
 }
