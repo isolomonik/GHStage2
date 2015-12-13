@@ -1,4 +1,4 @@
-package com.isolomonik.toolbaraction;
+package com.isolomonik.toolbaraction.utils;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -8,13 +8,10 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.squareup.picasso.Picasso;
+import com.isolomonik.toolbaraction.R;
+import com.isolomonik.toolbaraction.models.WeatherData;
 
 import java.util.ArrayList;
-import java.util.List;
-
-import io.realm.Realm;
-import io.realm.RealmList;
 
 /**
  * Created by ira on 22.11.15.

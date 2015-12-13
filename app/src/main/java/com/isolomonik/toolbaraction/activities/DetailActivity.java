@@ -1,9 +1,12 @@
-package com.isolomonik.toolbaraction;
+package com.isolomonik.toolbaraction.activities;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+
+import com.isolomonik.toolbaraction.fragments.DetailFragment;
+import com.isolomonik.toolbaraction.R;
 
 public class DetailActivity extends AppCompatActivity {
 

@@ -1,4 +1,4 @@
-package com.isolomonik.toolbaraction;
+package com.isolomonik.toolbaraction.models;
 
 import java.util.ArrayList;
 

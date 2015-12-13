@@ -1,4 +1,4 @@
-package com.isolomonik.toolbaraction;
+package com.isolomonik.toolbaraction.fragments;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -9,7 +9,9 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.squareup.picasso.Picasso;
+import com.isolomonik.toolbaraction.activities.MainListDetailActivity;
+import com.isolomonik.toolbaraction.R;
+import com.isolomonik.toolbaraction.models.WeatherData;
 
 import java.util.ArrayList;
 
@@ -72,9 +74,9 @@ Realm realm;
     }
 
 
-    void updateDetail() {
+    public void updateDetail() {
              //  hourWeather =weather.get(position);
-        realm.getInstance(MainListDetailActivity.realmConfiguration);
+        Realm realm = Realm.getInstance(MainListDetailActivity.realmConfiguration);
         realm.beginTransaction();
         RealmResults<WeatherData> result = realm.where(WeatherData.class).findAll();
         ArrayList<WeatherData> weatherList =new ArrayList<>();
@@ -83,7 +85,7 @@ Realm realm;
         weatherData=weatherList.get(position);
 
 //     //   dateTextView.setText(String.format(getResources().getString(R.string.dd_mmm_yyyy), aForecast.get("day"), aForecast.get("month"), aForecast.get("year")));
-        dateTV.setText(weatherData.getDt());
+        dateTV.setText(weatherData.getDate());
         tempTV.setText(String.format("%.1f \u2103 ", weatherData.getTemp()));
         mainTV.setText(weatherData.getDescription());
         // windTV.setText(Double.toString(hourWeather.wind.speed));

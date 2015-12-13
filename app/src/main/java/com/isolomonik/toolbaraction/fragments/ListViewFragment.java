@@ -1,4 +1,4 @@
-package com.isolomonik.toolbaraction;
+package com.isolomonik.toolbaraction.fragments;
 
 
 import android.content.Context;
@@ -11,8 +11,12 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
+import com.isolomonik.toolbaraction.utils.CallBackInterface;
+import com.isolomonik.toolbaraction.R;
+import com.isolomonik.toolbaraction.utils.WeatherAdapter;
+import com.isolomonik.toolbaraction.models.WeatherData;
+
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import io.realm.Realm;
 import io.realm.RealmResults;

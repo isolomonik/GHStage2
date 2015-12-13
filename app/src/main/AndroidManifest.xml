@@ -2,7 +2,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.isolomonik.toolbaraction" >
 
-
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
@@ -13,16 +12,23 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme" >
-        <activity android:name=".MainListDetailActivity" >
+        <activity android:name=".activities.MainListDetailActivity" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
-        <activity android:name=".DetailActivity" >
-        </activity>
-    </application>
 
+        </activity>
+        <activity android:name=".activities.DetailActivity" >
+        </activity>
+
+        <service
+            android:name=".services.LoadAPIService"
+            android:process=":load_process"
+            android:enabled="true"
+            android:exported="true" >
+        </service>
+    </application>
 
 </manifest>

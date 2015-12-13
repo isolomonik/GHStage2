@@ -1,4 +1,4 @@
-package com.isolomonik.toolbaraction;
+package com.isolomonik.toolbaraction.activities;
 
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -14,22 +14,26 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.isolomonik.toolbaraction.services.LoadAPIService;
+import com.isolomonik.toolbaraction.utils.CallBackInterface;
+import com.isolomonik.toolbaraction.fragments.DetailFragment;
+import com.isolomonik.toolbaraction.fragments.ListViewFragment;
+import com.isolomonik.toolbaraction.R;
+import com.isolomonik.toolbaraction.models.WeatherData;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.List;
 
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
-import io.realm.RealmList;
 import io.realm.RealmResults;
 import io.realm.exceptions.RealmMigrationNeededException;
 
@@ -38,8 +42,10 @@ public class MainListDetailActivity extends AppCompatActivity  implements CallBa
     public DetailFragment detailFragment;
     private FragmentManager fm = getSupportFragmentManager();
     private ProgressDialog progressDialog;
+    LoadWeather loadWeather;
     public  Realm realm;
     public static RealmConfiguration realmConfiguration ;
+
 
     //List<HourlyWeather> weather = new ArrayList<>();
     private ArrayList<WeatherData> weatherList= new ArrayList<>();
@@ -68,9 +74,14 @@ public class MainListDetailActivity extends AppCompatActivity  implements CallBa
         if (savedInstanceState == null) {
             if (isNetworkAvailable()){
 
+                startService(new Intent(MainListDetailActivity.this, LoadAPIService.class));
+
             // Starting AsynkTask to download and parse data
-            LoadWeather loadWeather = new LoadWeather();
-            loadWeather.execute();
+                loadWeather = (LoadWeather) getLastCustomNonConfigurationInstance();
+                if( loadWeather == null) {
+            loadWeather = new LoadWeather();
+            loadWeather.execute();}
+
         } else {
                 getweatherList();
                 Toast.makeText(this, "No Internet", Toast.LENGTH_SHORT).show();
@@ -79,7 +90,13 @@ public class MainListDetailActivity extends AppCompatActivity  implements CallBa
 
 
     }
-private boolean isNetworkAvailable(){
+
+    @Override
+    public Object onRetainCustomNonConfigurationInstance() {
+        return loadWeather;
+    }
+
+    private boolean isNetworkAvailable(){
     ConnectivityManager cm= (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
     NetworkInfo activeNetworkInfo =cm.getActiveNetworkInfo();
     return activeNetworkInfo!=null;
@@ -159,6 +176,7 @@ private boolean isNetworkAvailable(){
 //    }
 
 
+
     public class LoadWeather extends AsyncTask<Void, Void, ArrayList<WeatherData>>
             {
 
@@ -188,6 +206,7 @@ private boolean isNetworkAvailable(){
     }
 
  ArrayList<WeatherData> fetchData(){
+
      String dummyAppid = "0ebf995a77d995a5b5dabb0bff29b368";
      String queryWeather = "http://api.openweathermap.org/data/2.5/forecast/hourly?q=Cherkasy,ua&units=metric";
      String queryDummyKey = "&appid=" + dummyAppid;
@@ -236,7 +255,7 @@ private boolean isNetworkAvailable(){
              weather.setSpeed(weatherArray.getJSONObject(i).getJSONObject("wind").getDouble("speed"));
              weather.setHumidity(weatherArray.getJSONObject(i).getJSONObject("main").getInt("humidity"));
              weather.setPressure(weatherArray.getJSONObject(i).getJSONObject("main").getDouble("pressure"));
-            // weatherList.add(weather);
+             // weatherList.add(weather);
              realm.copyToRealmOrUpdate(weather);
          }
 

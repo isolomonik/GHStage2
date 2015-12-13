@@ -1,10 +1,8 @@
-package com.isolomonik.toolbaraction;
+package com.isolomonik.toolbaraction.utils;
+
+import com.isolomonik.toolbaraction.models.WeatherData;
 
 import java.util.ArrayList;
-import java.util.List;
-
-import io.realm.Realm;
-import io.realm.RealmList;
 
 /**
  * Created by ira on 21.11.15.

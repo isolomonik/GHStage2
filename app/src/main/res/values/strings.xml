@@ -2,6 +2,6 @@
     <string name="app_name">ToolbarAction</string>
     <string name="action_settings">Settings</string>
 
-<!-- TODO: Remove or change this placeholder text -->
     <string name="city">Hourly forecast in Cherkasy</string>
+    <string name="notificationText">to renew weather forecast</string>
 </resources>
