@@ -3,5 +3,8 @@
     <string name="action_settings">Settings</string>
 
     <string name="city">Hourly forecast in Cherkasy</string>
+    <string name="dummyAppid">0ebf995a77d995a5b5dabb0bff29b368</string>
+    <string name="queryWeather">http://api.openweathermap.org/data/2.5/forecast/hourly?q=Cherkasy,ua</string>
+
     <string name="notificationText">to renew weather forecast</string>
 </resources>

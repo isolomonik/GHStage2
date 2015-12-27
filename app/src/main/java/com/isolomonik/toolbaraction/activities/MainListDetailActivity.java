@@ -20,6 +20,7 @@ import com.isolomonik.toolbaraction.fragments.DetailFragment;
 import com.isolomonik.toolbaraction.fragments.ListViewFragment;
 import com.isolomonik.toolbaraction.R;
 import com.isolomonik.toolbaraction.models.WeatherData;
+import com.isolomonik.toolbaraction.utils.GlobalVar;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -44,7 +45,7 @@ public class MainListDetailActivity extends AppCompatActivity  implements CallBa
     private ProgressDialog progressDialog;
     LoadWeather loadWeather;
     public  Realm realm;
-    public static RealmConfiguration realmConfiguration ;
+
 
 
     //List<HourlyWeather> weather = new ArrayList<>();
@@ -56,9 +57,9 @@ public class MainListDetailActivity extends AppCompatActivity  implements CallBa
         setContentView(R.layout.activity_mainlistdetail);
 
         try {
-            realmConfiguration = new RealmConfiguration.Builder(MainListDetailActivity.this).build();
-            realm.setDefaultConfiguration(realmConfiguration);
-            realm = Realm.getInstance(realmConfiguration);
+            GlobalVar.realmConfiguration = new RealmConfiguration.Builder(MainListDetailActivity.this).build();
+            realm.setDefaultConfiguration(GlobalVar.realmConfiguration);
+            realm = Realm.getInstance(GlobalVar.realmConfiguration);
         } catch (RealmMigrationNeededException ex) {
             ex.printStackTrace();
                     }
@@ -67,15 +68,16 @@ public class MainListDetailActivity extends AppCompatActivity  implements CallBa
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setHomeButtonEnabled(true);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        toolbar.setLogo(R.drawable.ic_10d);
+    //    getSupportActionBar().setHomeButtonEnabled(true);
+     //   getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle(R.string.city);
 
         if (savedInstanceState == null) {
             if (isNetworkAvailable()){
-
-                startService(new Intent(MainListDetailActivity.this, LoadAPIService.class));
-
+                if (GlobalVar.isStartService) {
+                    startService(new Intent(MainListDetailActivity.this, LoadAPIService.class));
+                }
             // Starting AsynkTask to download and parse data
                 loadWeather = (LoadWeather) getLastCustomNonConfigurationInstance();
                 if( loadWeather == null) {
@@ -136,7 +138,7 @@ public class MainListDetailActivity extends AppCompatActivity  implements CallBa
             detailFragment.setItemContent(position);
             detailFragment.updateDetail();
 
-            realm = Realm.getInstance(realmConfiguration);
+            realm = Realm.getInstance(GlobalVar.realmConfiguration);
             fm.beginTransaction().replace(R.id.detailCont, detailFragment).commit();
         } else {
             if (findViewById(R.id.detailCont) != null){
@@ -210,15 +212,15 @@ public class MainListDetailActivity extends AppCompatActivity  implements CallBa
 
  ArrayList<WeatherData> fetchData(){
 
-     String dummyAppid = "0ebf995a77d995a5b5dabb0bff29b368";
-     String queryWeather = "http://api.openweathermap.org/data/2.5/forecast/hourly?q=Cherkasy,ua&units=metric";
-     String queryDummyKey = "&appid=" + dummyAppid;
+//     String dummyAppid = "0ebf995a77d995a5b5dabb0bff29b368";
+//     String queryWeather = "http://api.openweathermap.org/data/2.5/forecast/hourly?q=Cherkasy,ua&units=metric";
+//     String queryDummyKey = "" + dummyAppid;
      String json = "";
      String query = null;
      try {
-         query = queryWeather
+         query = getResources().getString(R.string.queryWeather)+"&units=metric&appid="
                  //+ URLEncoder.encode(cityName, "UTF-8")
-                 + queryDummyKey;
+                 +getResources().getString(R.string.dummyAppid);
 
          URL searchURL = new URL(query);
 
@@ -243,7 +245,7 @@ public class MainListDetailActivity extends AppCompatActivity  implements CallBa
 
 
 //         Realm.deleteRealm(realmConfiguration);
-         realm = Realm.getInstance(realmConfiguration);
+         realm = Realm.getInstance(GlobalVar.realmConfiguration);
          realm.beginTransaction();
 
          //  realm.createAllFromJson(WeatherData.class, weatherArray);

@@ -12,6 +12,7 @@ import android.widget.TextView;
 import com.isolomonik.toolbaraction.activities.MainListDetailActivity;
 import com.isolomonik.toolbaraction.R;
 import com.isolomonik.toolbaraction.models.WeatherData;
+import com.isolomonik.toolbaraction.utils.GlobalVar;
 
 import java.util.ArrayList;
 
@@ -76,7 +77,7 @@ Realm realm;
 
     public void updateDetail() {
              //  hourWeather =weather.get(position);
-        Realm realm = Realm.getInstance(MainListDetailActivity.realmConfiguration);
+        Realm realm = Realm.getInstance(GlobalVar.realmConfiguration);
         realm.beginTransaction();
         RealmResults<WeatherData> result = realm.where(WeatherData.class).findAll();
         ArrayList<WeatherData> weatherList =new ArrayList<>();
