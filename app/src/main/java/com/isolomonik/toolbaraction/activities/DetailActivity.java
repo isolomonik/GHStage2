@@ -24,13 +24,10 @@ public class DetailActivity extends AppCompatActivity {
 
         int position = getIntent().getExtras().getInt("position");
         fragment.setItemContent(position);
-    //    fragment.updateDetail();
         if (savedInstanceState == null) {
-          //  final DetailFragment fragment = DetailFragment.newInstance("My Content");
-
-            getSupportFragmentManager().beginTransaction().add(R.id.detailCont, fragment).commit();
+           getSupportFragmentManager().beginTransaction().add(R.id.detailCont, fragment).commit();
         } else {
-            fragment.updateDetail();
+           // fragment.updateDetail();
             getSupportFragmentManager().beginTransaction().replace(R.id.detailCont, fragment).commit();
 
         }

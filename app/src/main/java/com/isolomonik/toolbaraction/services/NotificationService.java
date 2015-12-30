@@ -7,26 +7,15 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.support.v7.app.NotificationCompat;
 import android.graphics.BitmapFactory;
 import android.os.IBinder;
-import android.util.TimeUtils;
+
 
 import com.isolomonik.toolbaraction.R;
 import com.isolomonik.toolbaraction.activities.MainListDetailActivity;
-import com.isolomonik.toolbaraction.models.WeatherData;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.concurrent.TimeUnit;
-
-import io.realm.Realm;
 
 public class NotificationService extends Service {
 
@@ -46,18 +35,21 @@ private static final int NOTIFY_ID=301;
 
         Context context=getApplicationContext();
         Intent notificationIntent=new Intent(context, MainListDetailActivity.class);
+        notificationIntent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
         PendingIntent contentIntent = PendingIntent.getActivity(context,0,notificationIntent,PendingIntent.FLAG_UPDATE_CURRENT);
         Resources res=context.getResources();
         builder= new Notification.Builder(context);
 
         builder.setContentIntent(contentIntent)
                 .setSmallIcon(R.mipmap.ic_weather)
+               // .setSmallIcon(android.R.drawable.stat_sys_upload)
                 .setLargeIcon(BitmapFactory.decodeResource(res, R.drawable.ic_10d))
                 .setWhen(System.currentTimeMillis())
                 .setDefaults(Notification.DEFAULT_ALL)
-                        //  .setAutoCancel(true)
-                        //  .addAction()
+                .setAutoCancel(true)
+                .addAction(android.R.drawable.stat_sys_upload,  "Update", contentIntent)
                 .setContentText(res.getText(R.string.notificationText))
+                .setContentTitle("Update weather")
                 .setTicker(res.getString(R.string.notificationText));
 
         // Notification notification = builder.getNotification(); // до API 16

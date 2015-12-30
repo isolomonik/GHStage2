@@ -27,11 +27,11 @@ public class ListViewFragment extends Fragment {
     private CallBackInterface callBackInterface;
     Realm realm;
 
-   ListView listView;
+    ListView listView;
     private WeatherAdapter adapter;
 
     public ListViewFragment() {
-           }
+    }
 
     @Override
     public void onAttach(Context context) {
@@ -39,17 +39,16 @@ public class ListViewFragment extends Fragment {
 
         try {
             callBackInterface = (CallBackInterface) context;
-                    } catch (ClassCastException exception) {
-            throw new ClassCastException(context.toString() + " Must implement CallbackInterface");
+        } catch (ClassCastException exception) {
+            throw new ClassCastException(context.toString());
         }
-         realm = Realm.getInstance(context);
+
     }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        realm = Realm.getInstance(getContext());
 
-        // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_list, container, false);
 
     }
@@ -60,13 +59,13 @@ public class ListViewFragment extends Fragment {
 
 
         listView = (ListView) view.findViewById(R.id.listView);
-
+        realm = Realm.getDefaultInstance();
         realm.beginTransaction();
         RealmResults<WeatherData> result = realm.where(WeatherData.class).findAll();
-        ArrayList<WeatherData> weatherList =new ArrayList<>();
+        ArrayList<WeatherData> weatherList = new ArrayList<>();
         weatherList.addAll(result.subList(0, result.size()));
         realm.commitTransaction();
-        adapter = new WeatherAdapter(getView().getContext(),weatherList);
+        adapter = new WeatherAdapter(getView().getContext(), weatherList);
 
         listView.setAdapter(adapter);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -75,6 +74,13 @@ public class ListViewFragment extends Fragment {
                 callBackInterface.updateContent(position);
             }
 
-    });
+        });
+    }
+
+    @Override
+    public void onStop() {
+        realm.close();
+        super.onStop();
+
     }
 }
