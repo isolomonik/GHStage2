@@ -28,7 +28,7 @@ import java.util.concurrent.TimeUnit;
 
 import io.realm.Realm;
 
-public class LoadAPIService extends Service {
+public class NotificationService extends Service {
 
     NotificationManager nm;
     Notification notification;
@@ -36,25 +36,13 @@ public class LoadAPIService extends Service {
 private static final int NOTIFY_ID=301;
 
 
-    public LoadAPIService() {
+    public NotificationService() {
     }
+
     @Override
     public void onCreate() {
         super.onCreate();
         nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-    }
-
-
-
-
-    @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
-
-//        try {
-//            TimeUnit.SECONDS.sleep(60);
-//        } catch (InterruptedException e) {
-//            e.printStackTrace();
-//        }
 
         Context context=getApplicationContext();
         Intent notificationIntent=new Intent(context, MainListDetailActivity.class);
@@ -67,18 +55,18 @@ private static final int NOTIFY_ID=301;
                 .setLargeIcon(BitmapFactory.decodeResource(res, R.drawable.ic_10d))
                 .setWhen(System.currentTimeMillis())
                 .setDefaults(Notification.DEFAULT_ALL)
-              //  .setAutoCancel(true)
-              //  .addAction()
+                        //  .setAutoCancel(true)
+                        //  .addAction()
                 .setContentText(res.getText(R.string.notificationText))
                 .setTicker(res.getString(R.string.notificationText));
 
         // Notification notification = builder.getNotification(); // до API 16
-         notification = builder.build();
+        notification = builder.build();
 
 //        NotificationManager notificationManager = (NotificationManager) context
 //                .getSystemService(Context.NOTIFICATION_SERVICE);
         notification.flags |= Notification.FLAG_AUTO_CANCEL;
-     //   nm.notify(NOTIFY_ID, notification);
+        //   nm.notify(NOTIFY_ID, notification);
         Thread thread = new Thread(){
             @Override
             public void run() {
@@ -93,9 +81,13 @@ private static final int NOTIFY_ID=301;
             }
         };
         thread.start();
+    }
 
 
 
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
         return Service.START_STICKY;
     }
 

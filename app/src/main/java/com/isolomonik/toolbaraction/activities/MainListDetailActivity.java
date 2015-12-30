@@ -14,13 +14,12 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-import com.isolomonik.toolbaraction.services.LoadAPIService;
+import com.isolomonik.toolbaraction.services.NotificationService;
 import com.isolomonik.toolbaraction.utils.CallBackInterface;
 import com.isolomonik.toolbaraction.fragments.DetailFragment;
 import com.isolomonik.toolbaraction.fragments.ListViewFragment;
 import com.isolomonik.toolbaraction.R;
 import com.isolomonik.toolbaraction.models.WeatherData;
-import com.isolomonik.toolbaraction.utils.GlobalVar;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -34,13 +33,13 @@ import java.net.URL;
 import java.util.ArrayList;
 
 import io.realm.Realm;
-import io.realm.RealmConfiguration;
 import io.realm.RealmResults;
 import io.realm.exceptions.RealmMigrationNeededException;
 
 public class MainListDetailActivity extends AppCompatActivity  implements CallBackInterface {
     public Fragment listFragment;
     public DetailFragment detailFragment;
+    private int position = 0;
     private FragmentManager fm = getSupportFragmentManager();
     private ProgressDialog progressDialog;
     LoadWeather loadWeather;
@@ -57,9 +56,7 @@ public class MainListDetailActivity extends AppCompatActivity  implements CallBa
         setContentView(R.layout.activity_mainlistdetail);
 
         try {
-            GlobalVar.realmConfiguration = new RealmConfiguration.Builder(MainListDetailActivity.this).build();
-            realm.setDefaultConfiguration(GlobalVar.realmConfiguration);
-            realm = Realm.getInstance(GlobalVar.realmConfiguration);
+            realm = Realm.getDefaultInstance();
         } catch (RealmMigrationNeededException ex) {
             ex.printStackTrace();
                     }
@@ -75,9 +72,9 @@ public class MainListDetailActivity extends AppCompatActivity  implements CallBa
 
         if (savedInstanceState == null) {
             if (isNetworkAvailable()){
-                if (GlobalVar.isStartService) {
-                    startService(new Intent(MainListDetailActivity.this, LoadAPIService.class));
-                }
+
+               //     startService(new Intent(MainListDetailActivity.this, NotificationService.class));
+
             // Starting AsynkTask to download and parse data
                 loadWeather = (LoadWeather) getLastCustomNonConfigurationInstance();
                 if( loadWeather == null) {
@@ -94,8 +91,9 @@ public class MainListDetailActivity extends AppCompatActivity  implements CallBa
     }
 
     @Override
-    public Object onRetainCustomNonConfigurationInstance() {
-        return loadWeather;
+    protected void onSaveInstanceState(Bundle savedInstanceState) {
+        savedInstanceState.putInt("position", position);
+        super.onSaveInstanceState(savedInstanceState);
     }
 
     private boolean isNetworkAvailable(){
@@ -134,17 +132,14 @@ public class MainListDetailActivity extends AppCompatActivity  implements CallBa
     @Override
     public void updateContent(int position) {
 
-        if (detailFragment!=null&& detailFragment.isVisible()) {
+        if (detailFragment !=null&& detailFragment.isVisible()) {
             detailFragment.setItemContent(position);
             detailFragment.updateDetail();
-
-            realm = Realm.getInstance(GlobalVar.realmConfiguration);
             fm.beginTransaction().replace(R.id.detailCont, detailFragment).commit();
         } else {
             if (findViewById(R.id.detailCont) != null){
                 detailFragment = new DetailFragment();
                 detailFragment.setItemContent(position);
-                detailFragment.updateDetail();
                 fm.beginTransaction().add(R.id.detailCont, detailFragment).commit();
             }else{
             Intent intent = new Intent(this, DetailActivity.class);
@@ -212,9 +207,7 @@ public class MainListDetailActivity extends AppCompatActivity  implements CallBa
 
  ArrayList<WeatherData> fetchData(){
 
-//     String dummyAppid = "0ebf995a77d995a5b5dabb0bff29b368";
-//     String queryWeather = "http://api.openweathermap.org/data/2.5/forecast/hourly?q=Cherkasy,ua&units=metric";
-//     String queryDummyKey = "" + dummyAppid;
+
      String json = "";
      String query = null;
      try {
@@ -245,7 +238,7 @@ public class MainListDetailActivity extends AppCompatActivity  implements CallBa
 
 
 //         Realm.deleteRealm(realmConfiguration);
-         realm = Realm.getInstance(GlobalVar.realmConfiguration);
+         realm = Realm.getDefaultInstance();
          realm.beginTransaction();
 
          //  realm.createAllFromJson(WeatherData.class, weatherArray);

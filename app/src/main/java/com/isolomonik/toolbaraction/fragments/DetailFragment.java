@@ -9,10 +9,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.isolomonik.toolbaraction.activities.MainListDetailActivity;
 import com.isolomonik.toolbaraction.R;
 import com.isolomonik.toolbaraction.models.WeatherData;
-import com.isolomonik.toolbaraction.utils.GlobalVar;
 
 import java.util.ArrayList;
 
@@ -43,7 +41,7 @@ Realm realm;
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        realm.getInstance(getContext());
+        realm.getDefaultInstance();
         return inflater.inflate(R.layout.fragment_detail, container, false);
 
     }
@@ -52,7 +50,7 @@ Realm realm;
     public void onAttach(Context context) {
         super.onAttach(context);
 
-        realm = Realm.getInstance(context);
+        realm = Realm.getDefaultInstance();
 
 
     }
@@ -77,7 +75,7 @@ Realm realm;
 
     public void updateDetail() {
              //  hourWeather =weather.get(position);
-        Realm realm = Realm.getInstance(GlobalVar.realmConfiguration);
+        realm = Realm.getDefaultInstance();
         realm.beginTransaction();
         RealmResults<WeatherData> result = realm.where(WeatherData.class).findAll();
         ArrayList<WeatherData> weatherList =new ArrayList<>();
@@ -85,8 +83,7 @@ Realm realm;
         realm.commitTransaction();
         weatherData=weatherList.get(position);
 
-//     //   dateTextView.setText(String.format(getResources().getString(R.string.dd_mmm_yyyy), aForecast.get("day"), aForecast.get("month"), aForecast.get("year")));
-        dateTV.setText(weatherData.getDate());
+       dateTV.setText(weatherData.getDate());
         tempTV.setText(String.format("%.1f \u2103 ", weatherData.getTemp()));
         mainTV.setText(weatherData.getDescription());
         // windTV.setText(Double.toString(hourWeather.wind.speed));

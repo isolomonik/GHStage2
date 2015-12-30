@@ -30,6 +30,7 @@ public class WeatherData extends RealmObject {
     }
 
     public String getDate() {
+
         return date;
     }
 
