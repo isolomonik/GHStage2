@@ -8,10 +8,13 @@ import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.isolomonik.toolbaraction.services.LoadDataService;
+import com.isolomonik.toolbaraction.services.NotificationService;
 import com.isolomonik.toolbaraction.utils.CallBackInterface;
 import com.isolomonik.toolbaraction.fragments.DetailFragment;
 import com.isolomonik.toolbaraction.fragments.ListViewFragment;
@@ -97,12 +100,20 @@ public class MainListDetailActivity extends AppCompatActivity  implements CallBa
             case android.R.id.home:
                 onBackPressed();
                 return true;
+            case R.id.stop_notif:
+                stopService(new Intent(MainListDetailActivity.this, NotificationService.class));
             default:
                 return super.onOptionsItemSelected(item);
 
         }
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.main_menu, menu);
+        return true;
+    }
 
     @Override
     public void updateContent(int position) {
@@ -158,7 +169,7 @@ public class MainListDetailActivity extends AppCompatActivity  implements CallBa
             realm.commitTransaction();
 
             return weatherList;
-            // return fetchData();
+
         }
 
         @Override
@@ -179,15 +190,5 @@ public class MainListDetailActivity extends AppCompatActivity  implements CallBa
         }
     }
 
- ArrayList<WeatherData> fetchData(){
 
-     startService(new Intent(this, LoadDataService.class));
-     realm = Realm.getDefaultInstance();
-         realm.beginTransaction();
-         RealmResults <WeatherData> result = realm.where(WeatherData.class).findAll();
-         weatherList.addAll(result.subList(0, result.size()));
-         realm.commitTransaction();
-
-     return weatherList;
- }
 }

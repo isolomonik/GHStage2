@@ -70,6 +70,7 @@ public class NotificationService extends Service {
                 timer.scheduleAtFixedRate(new TimerTask() {
                     synchronized public void run() {
                         if (GlobalVar.isNetworkAvailable(getBaseContext())) {
+                            builder.setWhen(System.currentTimeMillis());
                             nm.notify(NOTIFY_ID, notification);
                         }
                     }

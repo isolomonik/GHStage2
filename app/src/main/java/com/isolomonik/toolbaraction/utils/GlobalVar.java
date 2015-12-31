@@ -16,4 +16,6 @@ public class GlobalVar {
         NetworkInfo activeNetworkInfo = cm.getActiveNetworkInfo();
         return activeNetworkInfo != null;
     }
+
+
 }
