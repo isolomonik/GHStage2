@@ -1,118 +1,102 @@
 package com.isolomonik.toolbaraction.services;
 
+
 import android.app.IntentService;
-import android.app.Notification;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
+import android.util.Log;
+import android.widget.Toast;
 
-import com.isolomonik.toolbaraction.activities.MainListDetailActivity;
 
-import java.util.concurrent.TimeUnit;
+import com.isolomonik.toolbaraction.R;
+import com.isolomonik.toolbaraction.models.WeatherData;
+import com.isolomonik.toolbaraction.utils.GlobalVar;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+
+
+import io.realm.Realm;
 
 /**
  * Created by ira on 13.12.15.
  */
 public class LoadDataService extends IntentService {
 
-
-    NotificationManager nm;
-
-    /**
-     * Creates an IntentService.  Invoked by your subclass's constructor.
-     *
-     * @param name Used to name the worker thread, important only for debugging.
-     */
-    public LoadDataService(String name) {
-        super(name);
+    public LoadDataService() {
+        super("LoadDataService");
     }
 
 
     @Override
-
-    public void onCreate() {
-
-        super.onCreate();
-
-        nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-
-    }
-
-
-
-    @Override
-
-    public int onStartCommand(Intent intent, int flags, int startId) {
-
-        try {
-
-            TimeUnit.SECONDS.sleep(60);
-
-        } catch (InterruptedException e) {
-
-            e.printStackTrace();
-
-        }
-
-        sendNotif();
-
-        return super.onStartCommand(intent, flags, startId);
-
-    }
-
-
-
-    void sendNotif() {
-
-        // 1-я часть
-
-      //  Notification notif = new Notification(R.drawable.ic_launcher, "Text in status bar", System.currentTimeMillis());
-
-
-
-        // 3-я часть
-
-        Intent intent = new Intent(this, MainListDetailActivity.class);
-
-        PendingIntent pIntent = PendingIntent.getActivity(this, 0, intent, 0);
-
-
-
-        // 2-я часть
-
-     //   notif.setLatestEventInfo(this, "Notification's title", "Notification's text", pIntent);
-
-
-
-        // ставим флаг, чтобы уведомление пропало после нажатия
-
-    //    notif.flags |= Notification.FLAG_AUTO_CANCEL;
-
-    //    notif.number = 3;
-
-
-
-        // отправляем
-
-     //   nm.notify(1, notif);
-
-    }
-
-
-
-    @Override
-
-    public IBinder onBind(Intent arg0) {
-
+    public IBinder onBind(Intent intent) {
         return null;
-
     }
 
     @Override
     protected void onHandleIntent(Intent intent) {
+        Realm realm;
+        String json = "";
+        String query = null;
+        try {
+            query = getResources().getString(R.string.queryWeather)
+                    + "&units=metric&appid="
+                    //+ URLEncoder.encode(cityName, "UTF-8")
+                    + getResources().getString(R.string.dummyAppid);
+
+            URL searchURL = new URL(query);
+
+            HttpURLConnection httpURLConnection = (HttpURLConnection) searchURL.openConnection();
+            if (httpURLConnection.getResponseCode() == HttpURLConnection.HTTP_OK) {
+                InputStreamReader inputStreamReader = new InputStreamReader(httpURLConnection.getInputStream());
+                BufferedReader bufferedReader = new BufferedReader(inputStreamReader, 8192);
+
+                String line = null;
+                while ((line = bufferedReader.readLine()) != null) {
+                    json += line;
+                }
+
+                bufferedReader.close();
+            }
+
+            JSONObject jsonWeather = new JSONObject(json);
+
+            JSONArray weatherArray = jsonWeather.getJSONArray("list");
+
+            realm = Realm.getDefaultInstance();
+            realm.beginTransaction();
+
+
+            for (int i = 0; i < weatherArray.length(); i++) {
+                WeatherData weather = new WeatherData();
+                weather.setDt(weatherArray.getJSONObject(i).getString("dt"));
+                weather.setDate(weatherArray.getJSONObject(i).getString("dt_txt"));
+                weather.setIcon(weatherArray.getJSONObject(i).getJSONArray("weather").getJSONObject(0).getString("icon"));
+                weather.setTemp(weatherArray.getJSONObject(i).getJSONObject("main").getDouble("temp"));
+                weather.setDescription(weatherArray.getJSONObject(i).getJSONArray("weather").getJSONObject(0).getString("description"));
+                weather.setDeg(weatherArray.getJSONObject(i).getJSONObject("wind").getInt("deg"));
+                weather.setSpeed(weatherArray.getJSONObject(i).getJSONObject("wind").getDouble("speed"));
+                weather.setHumidity(weatherArray.getJSONObject(i).getJSONObject("main").getInt("humidity"));
+                weather.setPressure(weatherArray.getJSONObject(i).getJSONObject("main").getDouble("pressure"));
+
+                realm.copyToRealmOrUpdate(weather);
+            }
+            realm.commitTransaction();
+            Log.v(GlobalVar.MY_LOG, "update_ok");
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
     }
-
 }

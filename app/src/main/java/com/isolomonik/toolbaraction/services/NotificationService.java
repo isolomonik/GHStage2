@@ -14,7 +14,10 @@ import android.os.IBinder;
 
 import com.isolomonik.toolbaraction.R;
 import com.isolomonik.toolbaraction.activities.MainListDetailActivity;
+import com.isolomonik.toolbaraction.utils.GlobalVar;
 
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
 
 public class NotificationService extends Service {
@@ -22,7 +25,7 @@ public class NotificationService extends Service {
     NotificationManager nm;
     Notification notification;
     Notification.Builder builder;
-private static final int NOTIFY_ID=301;
+    private static final int NOTIFY_ID = 301;
 
 
     public NotificationService() {
@@ -33,49 +36,48 @@ private static final int NOTIFY_ID=301;
         super.onCreate();
         nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 
-        Context context=getApplicationContext();
-        Intent notificationIntent=new Intent(context, MainListDetailActivity.class);
+        Context context = getApplicationContext();
+        Intent notificationIntent = new Intent(context, MainListDetailActivity.class);
         notificationIntent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-        PendingIntent contentIntent = PendingIntent.getActivity(context,0,notificationIntent,PendingIntent.FLAG_UPDATE_CURRENT);
-        Resources res=context.getResources();
-        builder= new Notification.Builder(context);
+        PendingIntent contentIntent = PendingIntent.getActivity(context, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        Resources res = context.getResources();
+
+        Intent intentDownload = new Intent(this, LoadDataService.class);
+        PendingIntent downloadIntent = PendingIntent.getService(this, 0, intentDownload, PendingIntent.FLAG_UPDATE_CURRENT);
+        builder = new Notification.Builder(context);
 
         builder.setContentIntent(contentIntent)
                 .setSmallIcon(R.mipmap.ic_weather)
-               // .setSmallIcon(android.R.drawable.stat_sys_upload)
                 .setLargeIcon(BitmapFactory.decodeResource(res, R.drawable.ic_10d))
                 .setWhen(System.currentTimeMillis())
                 .setDefaults(Notification.DEFAULT_ALL)
                 .setAutoCancel(true)
-                .addAction(android.R.drawable.stat_sys_upload,  "Update", contentIntent)
+                .addAction(android.R.drawable.stat_sys_upload, "Update", downloadIntent)
                 .setContentText(res.getText(R.string.notificationText))
                 .setContentTitle("Update weather")
                 .setTicker(res.getString(R.string.notificationText));
 
         // Notification notification = builder.getNotification(); // до API 16
         notification = builder.build();
-
-//        NotificationManager notificationManager = (NotificationManager) context
-//                .getSystemService(Context.NOTIFICATION_SERVICE);
         notification.flags |= Notification.FLAG_AUTO_CANCEL;
-        //   nm.notify(NOTIFY_ID, notification);
-        Thread thread = new Thread(){
+
+
+        Thread thread = new Thread() {
             @Override
             public void run() {
-                while (true) {
-                    nm.notify(NOTIFY_ID, notification);
-                    try {
-                        TimeUnit.SECONDS.sleep(60);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
+//
+                Timer timer = new Timer();
+                timer.scheduleAtFixedRate(new TimerTask() {
+                    synchronized public void run() {
+                        if (GlobalVar.isNetworkAvailable(getBaseContext())) {
+                            nm.notify(NOTIFY_ID, notification);
+                        }
                     }
-                }
+                }, 5 * 1000, 60 * 1000);
             }
         };
         thread.start();
     }
-
-
 
 
     @Override
@@ -85,6 +87,6 @@ private static final int NOTIFY_ID=301;
 
     @Override
     public IBinder onBind(Intent intent) {
-       return null;
+        return null;
     }
 }

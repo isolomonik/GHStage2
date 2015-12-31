@@ -1,10 +1,7 @@
 package com.isolomonik.toolbaraction.activities;
 
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.Intent;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -14,22 +11,15 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-import com.isolomonik.toolbaraction.services.NotificationService;
+import com.isolomonik.toolbaraction.services.LoadDataService;
 import com.isolomonik.toolbaraction.utils.CallBackInterface;
 import com.isolomonik.toolbaraction.fragments.DetailFragment;
 import com.isolomonik.toolbaraction.fragments.ListViewFragment;
 import com.isolomonik.toolbaraction.R;
 import com.isolomonik.toolbaraction.models.WeatherData;
+import com.isolomonik.toolbaraction.utils.GlobalVar;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
 
 import io.realm.Realm;
@@ -45,9 +35,6 @@ public class MainListDetailActivity extends AppCompatActivity  implements CallBa
     LoadWeather loadWeather;
     public  Realm realm;
 
-
-
-    //List<HourlyWeather> weather = new ArrayList<>();
     private ArrayList<WeatherData> weatherList= new ArrayList<>();
 
     @Override
@@ -61,29 +48,21 @@ public class MainListDetailActivity extends AppCompatActivity  implements CallBa
             ex.printStackTrace();
                     }
 
-
-
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         toolbar.setLogo(R.drawable.ic_10d);
-    //    getSupportActionBar().setHomeButtonEnabled(true);
-     //   getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
         getSupportActionBar().setTitle(R.string.city);
 
         if (savedInstanceState == null) {
-            if (isNetworkAvailable()){
-
-               //     startService(new Intent(MainListDetailActivity.this, NotificationService.class));
-
-            // Starting AsynkTask to download and parse data
-                loadWeather = (LoadWeather) getLastCustomNonConfigurationInstance();
-                if( loadWeather == null) {
+            if (GlobalVar.isNetworkAvailable(this)) {
+                if (loadWeather == null) {
             loadWeather = new LoadWeather();
             loadWeather.execute();}
 
         } else {
                 getweatherList();
-                Toast.makeText(this, "No Internet", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, R.string.no_connection, Toast.LENGTH_SHORT).show();
             }
         }
 
@@ -96,11 +75,7 @@ public class MainListDetailActivity extends AppCompatActivity  implements CallBa
         super.onSaveInstanceState(savedInstanceState);
     }
 
-    private boolean isNetworkAvailable(){
-    ConnectivityManager cm= (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-    NetworkInfo activeNetworkInfo =cm.getActiveNetworkInfo();
-    return activeNetworkInfo!=null;
-}
+
 
 
     void initFragments() {
@@ -169,22 +144,21 @@ public class MainListDetailActivity extends AppCompatActivity  implements CallBa
         return weatherList;
     }
 
-//    @Override
-//    protected void onDestroy() {
-//        super.onDestroy();
-//        realm.close();
-//    }
-
-
 
     public class LoadWeather extends AsyncTask<Void, Void, ArrayList<WeatherData>>
             {
 
         @Override
         protected ArrayList<WeatherData> doInBackground(Void... params) {
-      //  protected List<HourlyWeather> doInBackground() {
+            startService(new Intent(MainListDetailActivity.this, LoadDataService.class));
+            realm = Realm.getDefaultInstance();
+            realm.beginTransaction();
+            RealmResults<WeatherData> result = realm.where(WeatherData.class).findAll();
+            weatherList.addAll(result.subList(0, result.size()));
+            realm.commitTransaction();
 
-          return fetchData();
+            return weatherList;
+            // return fetchData();
         }
 
         @Override
@@ -198,7 +172,7 @@ public class MainListDetailActivity extends AppCompatActivity  implements CallBa
         @Override
         protected void onPreExecute() {
             progressDialog = new ProgressDialog(MainListDetailActivity.this);
-            progressDialog.setMessage("Wait please");
+            progressDialog.setMessage(getResources().getString(R.string.waiting));
             progressDialog.setIndeterminate(true);
             progressDialog.show();
             super.onPreExecute();
@@ -207,73 +181,13 @@ public class MainListDetailActivity extends AppCompatActivity  implements CallBa
 
  ArrayList<WeatherData> fetchData(){
 
-
-     String json = "";
-     String query = null;
-     try {
-         query = getResources().getString(R.string.queryWeather)+"&units=metric&appid="
-                 //+ URLEncoder.encode(cityName, "UTF-8")
-                 +getResources().getString(R.string.dummyAppid);
-
-         URL searchURL = new URL(query);
-
-         HttpURLConnection httpURLConnection = (HttpURLConnection) searchURL.openConnection();
-         if (httpURLConnection.getResponseCode() == HttpURLConnection.HTTP_OK) {
-             InputStreamReader inputStreamReader = new InputStreamReader(httpURLConnection.getInputStream());
-             BufferedReader bufferedReader = new BufferedReader(inputStreamReader, 8192);
-
-             String line = null;
-             while ((line = bufferedReader.readLine()) != null) {
-                 json += line;
-             }
-
-             bufferedReader.close();
-         }
-
-         //    JsonObject gsonWeather = new JsonParser().parse(json).getAsJsonObject();
-
-         JSONObject jsonWeather = new JSONObject(json);
-
-         JSONArray weatherArray = jsonWeather.getJSONArray("list");
-
-
-//         Realm.deleteRealm(realmConfiguration);
-         realm = Realm.getDefaultInstance();
-         realm.beginTransaction();
-
-         //  realm.createAllFromJson(WeatherData.class, weatherArray);
-         for (int i = 0; i < weatherArray.length(); i++) {
-             WeatherData weather = new WeatherData();
-             weather.setDt(weatherArray.getJSONObject(i).getString("dt"));
-             weather.setDate(weatherArray.getJSONObject(i).getString("dt_txt"));
-             weather.setIcon(weatherArray.getJSONObject(i).getJSONArray("weather").getJSONObject(0).getString("icon"));
-             weather.setTemp(weatherArray.getJSONObject(i).getJSONObject("main").getDouble("temp"));
-             weather.setDescription(weatherArray.getJSONObject(i).getJSONArray("weather").getJSONObject(0).getString("description"));
-             weather.setDeg(weatherArray.getJSONObject(i).getJSONObject("wind").getInt("deg"));
-             weather.setSpeed(weatherArray.getJSONObject(i).getJSONObject("wind").getDouble("speed"));
-             weather.setHumidity(weatherArray.getJSONObject(i).getJSONObject("main").getInt("humidity"));
-             weather.setPressure(weatherArray.getJSONObject(i).getJSONObject("main").getDouble("pressure"));
-             // weatherList.add(weather);
-             realm.copyToRealmOrUpdate(weather);
-         }
-
-
-         realm.commitTransaction();
+     startService(new Intent(this, LoadDataService.class));
+     realm = Realm.getDefaultInstance();
          realm.beginTransaction();
          RealmResults <WeatherData> result = realm.where(WeatherData.class).findAll();
          weatherList.addAll(result.subList(0, result.size()));
          realm.commitTransaction();
 
-
-
-     } catch (JSONException e) {
-         e.printStackTrace();
-     } catch (IOException e) {
-         e.printStackTrace();
-     }
-// finally {
-//         realm.close();
-//     }
      return weatherList;
  }
 }
