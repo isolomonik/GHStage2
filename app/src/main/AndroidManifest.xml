@@ -29,6 +29,7 @@
             android:name=".services.NotificationService"
             android:enabled="true"
             android:exported="true"
+            android:stopWithTask="true"
             android:process=":load_process"></service>
         <service
             android:name=".services.LoadDataService"

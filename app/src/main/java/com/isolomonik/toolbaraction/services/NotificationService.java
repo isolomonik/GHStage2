@@ -7,6 +7,7 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.os.Build;
 import android.support.v7.app.NotificationCompat;
 import android.graphics.BitmapFactory;
 import android.os.IBinder;
@@ -57,9 +58,12 @@ public class NotificationService extends Service {
                 .setContentTitle("Update weather")
                 .setTicker(res.getString(R.string.notificationText));
 
+        if (Build.VERSION.SDK_INT<16){
         // Notification notification = builder.getNotification(); // до API 16
-        notification = builder.build();
-        notification.flags |= Notification.FLAG_AUTO_CANCEL;
+        notification = builder.build();}
+        else {
+            notification.flags |= Notification.FLAG_AUTO_CANCEL;
+        }
 
 
         Thread thread = new Thread() {

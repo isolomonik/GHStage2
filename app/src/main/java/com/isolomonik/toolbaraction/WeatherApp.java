@@ -19,6 +19,6 @@ public class WeatherApp extends Application {
         RealmConfiguration config = new RealmConfiguration.Builder(this).build();
         Realm.setDefaultConfiguration(config);
 
-        startService(new Intent(this, NotificationService.class));
+     //   startService(new Intent(this, NotificationService.class));
     }
 }
