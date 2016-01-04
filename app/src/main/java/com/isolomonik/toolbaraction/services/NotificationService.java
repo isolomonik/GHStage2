@@ -1,5 +1,6 @@
 package com.isolomonik.toolbaraction.services;
 
+import android.app.IntentService;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -11,6 +12,7 @@ import android.os.Build;
 import android.support.v7.app.NotificationCompat;
 import android.graphics.BitmapFactory;
 import android.os.IBinder;
+import android.util.Log;
 
 
 import com.isolomonik.toolbaraction.R;
@@ -21,7 +23,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
 
-public class NotificationService extends Service {
+public class NotificationService extends IntentService {
 
     NotificationManager nm;
     Notification notification;
@@ -30,10 +32,13 @@ public class NotificationService extends Service {
 
 
     public NotificationService() {
+        super("NotificationService");
     }
 
+
     @Override
-    public void onCreate() {
+    // public void onCreate() {
+    protected void onHandleIntent(Intent intent) {
         super.onCreate();
         nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 
@@ -53,42 +58,31 @@ public class NotificationService extends Service {
                 .setWhen(System.currentTimeMillis())
                 .setDefaults(Notification.DEFAULT_ALL)
                 .setAutoCancel(true)
-                .addAction(android.R.drawable.stat_sys_upload, "Update", downloadIntent)
                 .setContentText(res.getText(R.string.notificationText))
                 .setContentTitle("Update weather")
                 .setTicker(res.getString(R.string.notificationText));
 
-        if (Build.VERSION.SDK_INT<16){
-        // Notification notification = builder.getNotification(); // до API 16
-        notification = builder.build();}
-        else {
-            notification.flags |= Notification.FLAG_AUTO_CANCEL;
+        if (Build.VERSION.SDK_INT < 16) {
+            notification = builder.getNotification();
+        } else {
+            builder.addAction(android.R.drawable.stat_sys_upload, "Update", downloadIntent);
+            notification = builder.build();
+            // notification.flags = Notification.FLAG_AUTO_CANCEL;
         }
 
-
-        Thread thread = new Thread() {
-            @Override
-            public void run() {
-//
-                Timer timer = new Timer();
-                timer.scheduleAtFixedRate(new TimerTask() {
-                    synchronized public void run() {
-                        if (GlobalVar.isNetworkAvailable(getBaseContext())) {
-                            builder.setWhen(System.currentTimeMillis());
-                            nm.notify(NOTIFY_ID, notification);
-                        }
-                    }
-                }, 5 * 1000, 60 * 1000);
+        Timer timer = new Timer();
+        timer.scheduleAtFixedRate(new TimerTask() {
+            synchronized public void run() {
+                if (GlobalVar.isNetworkAvailable(getBaseContext())) {
+                    builder.setWhen(System.currentTimeMillis());
+                    nm.notify(NOTIFY_ID, notification);
+                    Log.v(GlobalVar.MY_LOG, "notification was started");
+                }
             }
-        };
-        thread.start();
+        }, 5 * 1000, 60 * 1000);
+
     }
 
-
-    @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
-        return Service.START_STICKY;
-    }
 
     @Override
     public IBinder onBind(Intent intent) {

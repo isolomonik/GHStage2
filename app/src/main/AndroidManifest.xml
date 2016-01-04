@@ -18,7 +18,6 @@
             android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
 
@@ -29,8 +28,8 @@
             android:name=".services.NotificationService"
             android:enabled="true"
             android:exported="true"
-            android:stopWithTask="true"
-            android:process=":load_process"></service>
+            android:process=":load_process"
+            android:stopWithTask="true"></service>
         <service
             android:name=".services.LoadDataService"
             android:enabled="true"
