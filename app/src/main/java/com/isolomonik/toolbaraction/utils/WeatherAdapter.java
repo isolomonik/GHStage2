@@ -7,42 +7,76 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.support.v7.widget.RecyclerView;
 
 import com.isolomonik.toolbaraction.R;
 import com.isolomonik.toolbaraction.models.WeatherData;
 
 import java.util.ArrayList;
 
+
 /**
  * Created by ira on 22.11.15.
  */
-public class WeatherAdapter extends BaseAdapter {
+
+public class WeatherAdapter extends RecyclerView.Adapter<WeatherAdapter.ForecastHolder> {
+
 
     private Context context;
     private ArrayList<WeatherData> weather;
 
-    private static class ViewHolder {
+    class ForecastHolder extends RecyclerView.ViewHolder {
+
         ImageView imgv;
-        TextView city;
+        TextView dmy;
         TextView description;
         TextView temperature;
+
+        public ForecastHolder(View itemView) {
+            super(itemView);
+            this.imgv = (ImageView) itemView.findViewById(R.id.img);
+            this.dmy = (TextView) itemView.findViewById(R.id.dmy);
+            this.description = (TextView) itemView.findViewById(R.id.description);
+            this.temperature = (TextView) itemView.findViewById(R.id.temp);
+        }
     }
 
     public WeatherAdapter(Context context, ArrayList<WeatherData> weather) {
         this.context = context;
-        this.weather =weather;
+        this.weather = weather;
+    }
 
 
+    public ForecastHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        LayoutInflater inflater = LayoutInflater.from(parent.getContext());
+        View rowView = inflater.inflate(R.layout.row_weather, parent, false);
+
+        final ForecastHolder forecastHolder = new ForecastHolder(rowView);
+        rowView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                CallBackInterface myInterface = (CallBackInterface) context;
+                myInterface.updateContent(forecastHolder.getAdapterPosition());
+            }
+        });
+        return forecastHolder;
+    }
+
+    public void onBindViewHolder(ForecastHolder holder, int position) {
+        WeatherData forecast = weather.get(position);
+        if (forecast != null) {
+
+            int resID = context.getResources().getIdentifier("ic_" + forecast.getIcon(), "drawable", context.getPackageName());
+            holder.imgv.setImageResource(resID);
+            holder.dmy.setText(forecast.getDate());
+            holder.description.setText(forecast.getDescription());
+            holder.temperature.setText(String.format("%.1f \u2103 ", forecast.getTemp()));
+        }
     }
 
     @Override
-    public int getCount() {
+    public int getItemCount() {
         return weather.size();
-    }
-
-    @Override
-    public Object getItem(int position) {
-        return weather.get(position);
     }
 
     @Override
@@ -51,20 +85,7 @@ public class WeatherAdapter extends BaseAdapter {
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-      //  ViewHolder vh = null;
-        WeatherData forecast = weather.get(position);
-        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View rowView = inflater.inflate(R.layout.row_weather, parent, false);
-
-       // Picasso.with(context).load("http://openweathermap.org/img/w/" + forecast.getIcon() + ".png").into((ImageView) rowView.findViewById(R.id.img));
-        int resID = context.getResources().getIdentifier("ic_"+forecast.getIcon() , "drawable", context.getPackageName());
-        ((ImageView) rowView.findViewById(R.id.img)).setImageResource(resID);
-
-        ((TextView) rowView.findViewById(R.id.dmy)).setText(forecast.getDate());
-        ((TextView) rowView.findViewById(R.id.description)).setText(forecast.getDescription());
-        ((TextView) rowView.findViewById(R.id.temp)).setText(String.format("%.1f \u2103 ", forecast.getTemp()));
-
-        return rowView;
+    public void onAttachedToRecyclerView(RecyclerView recyclerView) {
+        super.onAttachedToRecyclerView(recyclerView);
     }
 }

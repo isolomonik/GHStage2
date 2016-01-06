@@ -167,7 +167,6 @@ public class MainListDetailActivity extends AppCompatActivity  implements CallBa
             RealmResults<WeatherData> result = realm.where(WeatherData.class).findAll();
             weatherList.addAll(result.subList(0, result.size()));
             realm.commitTransaction();
-
             return weatherList;
 
         }

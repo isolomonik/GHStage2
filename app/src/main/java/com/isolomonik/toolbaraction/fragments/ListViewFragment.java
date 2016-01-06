@@ -5,11 +5,11 @@ import android.content.Context;
 import android.os.Bundle;
 ;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ListView;
 
 import com.isolomonik.toolbaraction.utils.CallBackInterface;
 import com.isolomonik.toolbaraction.R;
@@ -27,7 +27,7 @@ public class ListViewFragment extends Fragment {
     private CallBackInterface callBackInterface;
     Realm realm;
 
-    ListView listView;
+    private RecyclerView recyclerView;
     private WeatherAdapter adapter;
 
     public ListViewFragment() {
@@ -58,7 +58,9 @@ public class ListViewFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
 
-        listView = (ListView) view.findViewById(R.id.listView);
+        recyclerView = (RecyclerView) view.findViewById(R.id.listView);
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
+        recyclerView.setLayoutManager(layoutManager);
         realm = Realm.getDefaultInstance();
         realm.beginTransaction();
         RealmResults<WeatherData> result = realm.where(WeatherData.class).findAll();
@@ -66,15 +68,8 @@ public class ListViewFragment extends Fragment {
         weatherList.addAll(result.subList(0, result.size()));
         realm.commitTransaction();
         adapter = new WeatherAdapter(getView().getContext(), weatherList);
+        recyclerView.setAdapter(adapter);
 
-        listView.setAdapter(adapter);
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                callBackInterface.updateContent(position);
-            }
-
-        });
     }
 
     @Override

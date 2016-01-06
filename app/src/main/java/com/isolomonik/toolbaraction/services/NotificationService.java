@@ -37,7 +37,6 @@ public class NotificationService extends IntentService {
 
 
     @Override
-    // public void onCreate() {
     protected void onHandleIntent(Intent intent) {
         super.onCreate();
         nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
@@ -67,7 +66,7 @@ public class NotificationService extends IntentService {
         } else {
             builder.addAction(android.R.drawable.stat_sys_upload, "Update", downloadIntent);
             notification = builder.build();
-            // notification.flags = Notification.FLAG_AUTO_CANCEL;
+            notification.flags = Notification.FLAG_AUTO_CANCEL;
         }
 
         Timer timer = new Timer();
