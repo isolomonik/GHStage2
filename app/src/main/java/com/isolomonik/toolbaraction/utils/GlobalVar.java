@@ -11,6 +11,8 @@ public class GlobalVar {
 
     public static final String MY_LOG = "Weather";
 
+    public static long scTime=60000*4;   // 4 min
+
     public static boolean isNetworkAvailable(Context context) {
         ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetworkInfo = cm.getActiveNetworkInfo();

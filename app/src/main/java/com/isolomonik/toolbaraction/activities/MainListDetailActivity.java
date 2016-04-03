@@ -63,7 +63,7 @@ public class MainListDetailActivity extends AppCompatActivity  implements CallBa
             loadWeather = new LoadWeather();
             loadWeather.execute();}
 
-        } else {
+            } else {
                 getweatherList();
                 Toast.makeText(this, R.string.no_connection, Toast.LENGTH_SHORT).show();
             }

@@ -52,7 +52,7 @@ public class NotificationService extends IntentService {
         builder = new Notification.Builder(context);
 
         builder.setContentIntent(contentIntent)
-                .setSmallIcon(R.mipmap.ic_weather)
+               // .setSmallIcon(R.mipmap.ic_weather)
                 .setLargeIcon(BitmapFactory.decodeResource(res, R.drawable.ic_10d))
                 .setWhen(System.currentTimeMillis())
                 .setDefaults(Notification.DEFAULT_ALL)
@@ -69,17 +69,7 @@ public class NotificationService extends IntentService {
             notification.flags = Notification.FLAG_AUTO_CANCEL;
         }
 
-        Timer timer = new Timer();
-        timer.scheduleAtFixedRate(new TimerTask() {
-            synchronized public void run() {
-                if (GlobalVar.isNetworkAvailable(getBaseContext())) {
-                    builder.setWhen(System.currentTimeMillis());
-                    nm.notify(NOTIFY_ID, notification);
-                    Log.v(GlobalVar.MY_LOG, "notification was started");
-                }
-            }
-        }, 5 * 1000, 60 * 1000);
-
+        nm.notify(NOTIFY_ID, notification);
     }
 
 
